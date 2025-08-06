@@ -1,0 +1,212 @@
+# VARIABLES
+variable        data_name           index    /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/PEO_KG_0.data
+variable        final               index    /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Final_Positions/PEO_KG_0.end
+variable        thermo_freq         index    100000
+variable        time_step           index    0.01
+variable        soft_steps          index    1000000
+variable        full_steps          index    1000000
+variable        seed_val            index    569540
+
+#===========================================================
+# GENERAL PROCEDURES
+#===========================================================
+units		lj
+dimension	3
+newton		off
+boundary	p p p 
+atom_style	angle
+
+#===========================================================
+# FORCE FIELD DEFINITION
+#===========================================================
+pair_style table linear 1000
+bond_style class2
+angle_style cosine
+special_bonds fene
+neigh_modify delay 0 every 1 check yes page 500000 one 50000
+
+comm_modify cutoff 3
+
+#===========================================================
+# SETUP SIMULATIONS
+#===========================================================
+# READ IN COEFFICIENTS/COORDINATES/TOPOY
+read_data ${data_name}
+
+# SET RUN PARAMETERS
+timestep	${time_step}
+run_style	verlet
+
+# SET OUTPUTS
+thermo_style    custom step temp vol density etotal pe ebond eangle evdwl enthalpy press
+thermo_modify   format float %14.6f
+thermo ${thermo_freq}
+
+# DECLARE RELEVANT OUTPUT VARIABLES
+variable        my_step equal   step
+variable        my_temp equal   temp
+variable        my_rho  equal   density
+variable        my_E    equal   etotal
+variable        my_pe   equal   pe
+variable        my_ebon equal   ebond
+variable        my_eang equal   eangle
+variable        my_edih equal   edihed
+variable        my_evdw equal   evdwl
+variable        my_eel  equal   (ecoul+elong)
+variable        my_ent  equal   enthalpy
+variable        my_P    equal   press
+variable        my_vol  equal   vol
+
+velocity all create 1.0 ${seed_val} mom yes rot yes dist gaussian
+
+fix flying_icecube all momentum 1000 linear 1 1 1 angular rescale
+
+################################################################################
+#
+# The following protocol is presented in J. Chem. Phys. 158, 054903 (2023)
+# doi.org/10.1063/5.0123431 as a method for the equilibration of KG melts
+# through the use of capped WCA potentials and renormalized bending potentials.
+#
+# A python script was used to numerically solve for the inner cutoffs and the
+# renormalized bending potentials and insert then into this in script. The
+# python script also generates the needed table files for the pair potential.
+#
+# The initial in script will mark lines to be edited with the word "P Y T H O N"
+# followed by "pair U0" or "angle U0", where the line is replaced three lines:
+#
+#   pair U0 :
+#   1) "pair_coeff 1 1" followed by the associated pair table path
+#   2) "special_bonds fene"
+#
+#   angle U0 :
+#   1) "angle_coeff 1" follow by the renormalized kappa for the given U0 
+#
+################################################################################
+
+fix thermostat all langevin 1.0 1.0 0.2 ${seed_val} gjf vhalf
+fix nve_dynamics all nve/limit 0.05
+
+bond_coeff 1 0.965 490.628 -2256.76 9685.31
+
+#===========================================================
+# U0 = 1
+#===========================================================
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_1.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.2575402603537258
+
+run 10000
+
+#===========================================================
+# U0 = 2
+#===========================================================
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_2.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.2119722585438546
+
+run 10000
+
+#===========================================================
+# U0 = 5
+#===========================================================
+
+
+unfix nve_dynamics
+unfix thermostat
+fix thermostat all langevin 1.0 1.0 2.0 ${seed_val} gjf vhalf
+fix nve_dynamics all nve/limit 0.05
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_5.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.1595360647970427
+
+run ${soft_steps}
+
+#===========================================================
+# U0 = 10
+#===========================================================
+
+unfix nve_dynamics
+unfix thermostat
+fix thermostat all langevin 1.0 1.0 0.2 ${seed_val} gjf vhalf
+fix nve_dynamics all nve/limit 0.05
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_10.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.1297025559690776
+
+run 10000
+
+#===========================================================
+# U0 = 20
+#===========================================================
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_20.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.108759766241716
+
+run 10000
+
+#===========================================================
+# U0 = 50
+#===========================================================
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_50.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.0920062753990336
+
+run 10000
+
+#===========================================================
+# U0 = 75
+#===========================================================
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_75.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.0874431603632475
+
+run 10000
+
+#===========================================================
+# U0 = 100
+#===========================================================
+
+pair_coeff 1 1 /scratch/gpfs/jm7732/Equil/PEO_Paper/KG/Inputs/KG_U0_100.table Nonbonded
+special_bonds fene
+angle_coeff 1 1.084961284656816
+
+run 10000
+
+#===========================================================
+# WCA
+#===========================================================
+
+pair_style lj/cut 1.1224620483
+pair_coeff * * 1 1
+pair_modify shift yes
+special_bonds   fene
+angle_coeff 1 1.075488138006351
+
+run 10000
+
+#===========================================================
+# WCA & FENE
+#===========================================================
+
+bond_style      fene
+bond_coeff  1	30	1.5	1	1
+special_bonds   fene
+angle_coeff 1 1.075488138006351
+
+run 50000
+
+unfix nve_dynamics
+unfix thermostat
+fix thermostat all langevin 1.0 1.0 2.0 ${seed_val} gjf vhalf
+fix nve_dynamics all nve/limit 0.05
+
+run ${full_steps}
+
+write_data      ${final}
