@@ -21,6 +21,7 @@ PATH_TO_DIRECTORY = /absolute/path/to/your/workdir
 - Run Stage I (in order):
 python stage_I/step_1.py
 python stage_I/step_2_in_maker.py
+lammps stage_I/step_2/inputs/step_2.in
 python stage_I/step_3.py
 
 
