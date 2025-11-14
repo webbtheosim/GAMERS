@@ -39,8 +39,8 @@ File map and purpose
 - stage_II/openmm.py — runs the OpenMM-based Stage II simulation that consumes restraint files produced by Stage I.
 - openff_system_generation/ — optional helpers for generating starting systems (use as needed in your workflow).
 Place-to-file relationships:
-- Files produced by step_1.py → consumed by step_2_in_maker.py.
-- step_2_in_maker.py → produces step_2.in and LAMMPS data files.
+- Files produced by step_1.py → consumed by step_2_in_maker.py, step_2.in, and step_3.py.
+- step_2_in_maker.py → produces step_2.in.
 - step_3.py → produces restraint ID/coordinate files consumed by stage_II/openmm.py.
 
 Configuration and PATH_TO_DIRECTORY
