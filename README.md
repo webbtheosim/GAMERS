@@ -15,7 +15,7 @@ cd GAMERS
 
 
 - Edit the configuration:
-# open GAMERS.input at repository root and set:
+open GAMERS.input at repository root and set:
 PATH_TO_DIRECTORY = /absolute/path/to/your/workdir
 
 
