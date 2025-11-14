@@ -6,7 +6,7 @@ Repository for General Approach for Macromolecular Equilibration via Restrained 
 <br />
 
 GAMERS — Quickstart README
-This README explains how to run the GAMERS pipeline (Stage I → Stage II) using the scripts provided in this repository. It assumes you have cloned the repo and will edit a single configuration file before running the pipeline.
+This README explains how to run the GAMERS pipeline using the scripts provided in this repository. It assumes you have cloned the repo and will edit a single configuration file before running the pipeline.
 
 Quick start commands
 - Clone the repository:
