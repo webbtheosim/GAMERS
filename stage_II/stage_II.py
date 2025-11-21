@@ -161,7 +161,7 @@ path = 'PATH_TO_DIRECTORY'
 
 pdb_file = path + '/stage_II/inputs/system.pdb
 system_file = path + '/stage_II/inputs/system.xml'
-thermo_file = path + '/stage_II/outputs/step_3.thermo'
+thermo_file = path + '/stage_II/step_3.thermo'
 groups_file = path + '/stage_I/step_3_restraint.ids'
 crds_file = path + '/stage_I/step_3_restraint.pos'
 tether_prefactor = 1
