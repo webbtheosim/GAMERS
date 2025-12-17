@@ -78,7 +78,6 @@ with open(Path(__file__).resolve().parent.parent / 'GAMERS.input') as input:
     for line in lines[:-1]:
         inputs[line.split(':')[0]] = line.strip().split(':')[1]
 
-mol = inputs['polymer_name']
 N_mon = int(inputs['degree_of_polymerization'])
 connector_idx = int(inputs['smiles_connection_index'])
 smiles_mon = inputs['monomer_smiles']
