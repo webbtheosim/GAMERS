@@ -59,16 +59,10 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 
 - All scripts read configuration from `GAMERS.input`. Changing only `GAMERS.input` will redirect where inputs and outputs are read/written.
 
-## Dependencies and recommended environment
+## Dependencies
 - Python 3.8+ (use a virtual environment for reproducibility).
-- Typical Python packages used by the scripts (install into the venv): `numpy`, `openmm`, `openff-toolkit` and any other packages imported at the top of the scripts. Create a venv and install via:
-  ```bash
-  python -m venv .venv
-  source .venv/bin/activate   # or .venv\Scripts\activate on Windows
-  pip install numpy pandas
-  ```
-
-- LAMMPS — required if you plan to execute the generated `step_2.in`.
+- Typical Python packages used by the scripts (install into the venv): `numpy`, `openmm`, `openff-toolkit`, `rdkit`, and any other packages imported at the top of the scripts.
+- LAMMPS — required to execute the generated `step_2.in`.
 
 ## Troubleshooting and notes
 - If a script fails to find files, confirm `/absolute/path/to/your/workdir` in `GAMERS.input` and ensure that directory exists and is writable.
@@ -78,5 +72,5 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 - Typical run order must be preserved: `step_1.py` → `step_2_in_maker.py` → `step_2.in` → `step_3.py` → `stage_II.py`.
 
 ## License and attribution
-- Repository source: https://github.com/webbtheosim/GAMERS/tree/main
+- Repository source: https://github.com/webbtheosim/GAMERS
 - Please keep attribution to the original GAMERS authors in derivative documentation.
