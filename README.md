@@ -15,11 +15,12 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
   cd GAMERS
   ```
 
-- **Edit the configuration:**
+- **Edit the input file:**
+  Open `GAMERS.input` at repository root and adjust path to desired directory.
   ```bash
-  # open GAMERS.input at repository root and adjust path to desired directory
   output_directory:/absolute/path/to/your/workdir
   ```
+  Other parameters in `GAMERS.input` can be adjusted to generate a different system.
 
 - **Run Stage I (in order):**
   ```bash
