@@ -14,5 +14,5 @@ monomer_smiles:C(c1ccccc1)C
 smiles_connection_index:-1
 head_smiles:
 tail_smiles:
-job_name:PS_DoP100_0
+job_name:job_name
 end
