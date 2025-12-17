@@ -5,7 +5,7 @@ Repository for General Approach for Macromolecular Equilibration via Restrained 
 <img src="overview.png" />
 <br />
 
-This README explains how to run the GAMERS pipeline using the scripts provided in this repository. It assumes you have cloned the repo and will edit a single configuration file before running the pipeline.
+This README explains how to run the GAMERS pipeline using the scripts provided in this repository. It assumes you have cloned the repo and will edit a single configuration file before running the pipeline. Along with GAMERS scripts, this repository contains example GAMERS input and output files for the generation of a polystyrene melt.
 
 ## Quick start commands
 
@@ -48,11 +48,13 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 
 ## File map and purpose
 - `GAMERS.input` — central configuration file read by all Python scripts; contains /absolute/path/to/your/workdir and system-specific settings.
-- `stage_I/step_1.py` — creates the KG → HR mapping and prepares the LAMMPS data/topology files for Step 2.
-- `stage_I/step_2_in_maker.py` — generates step_2.in (LAMMPS input) by adding parameters to step_2_base.in.
-- `stage_I/step_3.py` — creates restraint point IDs and positions used by Stage II.
+- `stage_I/step_1.py` — creates the HR → KG mapping (`stage_I/step_1.mapping`) and prepares the LAMMPS data/topology files for step 2.
+- `stage_I/step_2_in_maker.py` — generates `stage_I/step_2_inputs/step_2.in` (LAMMPS input) by adding parameters to `stage_I/step_2_inputs/step_2_base.in`.
+- `stage_I/step_2_inputs/step_2.in` — generates equilibrated KG melt positions in `stage_I/step_2.end` for use in step 3.
+- `stage_I/step_3.py` — creates restraint point IDs and positions (`stage_I/step_3_restraint.ids` and `stage_I/step_3_restraint.pos`) from `stage_I/step_2.end` and `stage_I/step_1.mapping` for Stage II.
 - `stage_II/stage_II.py` — runs the OpenMM-based Stage II simulation that consumes restraint files produced by Stage I.
 - `openff_system_maker.py` — optional generation of OpenMM input files (e.g. sys.xml) with SAGE force field (use as needed in your workflow).
+A detailed description of GAMERS can be found at https://doi.org/10.1021/acs.jctc.5c01332.
 
 **Place-to-file relationships:**
 - Files produced by `stage_I/step_1.py` → consumed by `stage_I/step_2_in_maker.py` and `stage_I/step_3.py`.
