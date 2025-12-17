@@ -54,6 +54,7 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 - `stage_I/step_3.py` — creates restraint point IDs and positions (`stage_I/step_3_restraint.ids` and `stage_I/step_3_restraint.pos`) from `stage_I/step_2.end` and `stage_I/step_1.mapping` for Stage II.
 - `stage_II/stage_II.py` — runs the OpenMM-based Stage II simulation that consumes restraint files produced by Stage I.
 - `openff_system_maker.py` — optional generation of OpenMM input files (e.g. sys.xml) with SAGE force field (use as needed in your workflow).
+
 A detailed description of GAMERS can be found at https://doi.org/10.1021/acs.jctc.5c01332.
 
 **Place-to-file relationships:**
