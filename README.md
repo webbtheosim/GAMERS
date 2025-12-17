@@ -35,8 +35,8 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
   ```
   This will generate the required files with openff-toolkit, namely
   <ol type="1">
-    <li>a .pdb file containing all atoms of the system named sys.pdb</li>
-    <li>an openmm system object matching sys.pdb saved as sys.xml</li>
+    <li>sys.pdb: a properly formatted .pdb file containing all atoms of the system named </li>
+    <li>sys.xml: an openmm system object matching sys.pdb</li>
   </ol>
   
 - **Run Stage II:**
