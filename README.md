@@ -21,7 +21,7 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
   ```bash
   output_directory:/absolute/path/to/your/workdir
   ```
-  Other parameters in `GAMERS.input` can be adjusted to generate a different system.
+  Other parameters in `GAMERS.input` can be adjusted to generate a different system (see Input parameters below).
 
 - **Run Stage I (in order):**
   ```bash
@@ -46,7 +46,27 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
   python stage_II/stage_II.py
   ```
 
-Outputs will be written to the locations configured in GAMERS.input (see Configuration below).
+Outputs will be written to the locations configured in `GAMERS.input` (see Path configuration below).
+
+## Input parameters
+
+Select parameters  `GAMERS.input` are described below:
+- restrained_force_prefactor(kJ/mol/amu/nm^2): the spring constant *k<sub>sh</sub>* of semiharmonic restraint potential
+- restrained_simulation_length(ns): the length of stage II phase i (the pulling portion)
+- annealing_simulation_length(ns): the length of stage II phase iii (the entire annealing relaxation protocol)
+- npt_simulation_length(ns): the length of post-GAMERS isobaric relaxation
+- monomer_smiles: the smiles string for the monomer of interest
+- smiles_connection_index: the index of the final backbone atom of the monomer smiles string (see examples below)
+- head_smiles: the smiles string for the head of a chain (left empty for hydrogen)
+- tail_smiles: the smiles string for the tail of a chain (left empty for hydrogen)
+
+The smiles_connection_index counts from the end of the smiles string to the until reaching a backbone atom, ignoring symbols.
+This is the atom that will connect to the next monomer during polymerization, which is important for the logical reindexing of OpenFF-generated systems.
+Below are example monomer_smiles and smiles_connection_index combinations for select polymers:
+- PEO: COC, -1
+- PBD: C/C=C\C, -1
+- PC: c1ccc(cc1)OC(=O)Oc1ccc(cc1)C(C)(C) -3
+- PS: C(c1ccccc1)C, -1
 
 ## File map and purpose
 - `GAMERS.input` — central configuration file read by all Python scripts; contains /absolute/path/to/your/workdir and system-specific settings.
