@@ -10,29 +10,29 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
 ## Quick start commands
 
 - **Clone the repository:**
-  '''bash
+  ```bash
   git clone https://github.com/webbtheosim/GAMERS.git
   cd GAMERS
-  '''
+  ```
 
 - **Edit the configuration:**
-  '''bash
+  ```bash
   # open GAMERS.input at repository root and set:
   PATH_TO_DIRECTORY = /absolute/path/to/your/workdir
-  '''
+  ```
 
 - **Run Stage I (in order):**
-  '''bash
+  ```bash
   python stage_I/step_1.py
   python stage_I/step_2_in_maker.py
   lammps stage_I/step_2/inputs/step_2.in
   python stage_I/step_3.py
-  '''
+  ```
 
 - **Run Stage II:**
-  '''bash
+  ```bash
   python stage_II/openmm.py
-  '''
+  ```
 
 Outputs will be written to the locations configured in GAMERS.input (see Configuration below).
 
@@ -52,9 +52,9 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 ## Configuration and PATH_TO_DIRECTORY
 - Edit the single file `GAMERS.input` at the repository root to configure runs.
 - Set the variable `PATH_TO_DIRECTORY` to an absolute path for your working directory:
-  '''bash
+  ```bash
   PATH_TO_DIRECTORY = /absolute/path/to/your/workdir
-  '''
+  ```
 
 - All scripts read configuration from `GAMERS.input`. Changing only `PATH_TO_DIRECTORY` will redirect where inputs and outputs are read/written.
 
@@ -64,11 +64,11 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 ## Dependencies and recommended environment
 - Python 3.8+ (use a virtual environment for reproducibility).
 - Typical Python packages used by the scripts (install into the venv): `numpy`, `pandas` and any other packages imported at the top of the scripts. Create a venv and install via:
-  '''bash
+  ```bash
   python -m venv .venv
   source .venv/bin/activate   # or .venv\Scripts\activate on Windows
   pip install numpy pandas
-  '''
+  ```
 
 - LAMMPS — required if you plan to execute the generated `step_2.in`.
 - OpenMM — required to run `stage_II/openmm.py`.
