@@ -34,7 +34,7 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
       <li>a .pdb file containing all atoms of the system named sys.pdb</li>
       <li>an openmm system object matching sys.pdb saved as sys.xml</li>
     </ol>
-  These can be generated with the provided openff-toolkit script:
+  These can be generated with the provided openff-toolkit script
   ```bash
   python openff_system_maker.py
   ```
