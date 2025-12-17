@@ -84,7 +84,6 @@ with open(Path(__file__).resolve().parent.parent / 'GAMERS.input') as input:
     for line in lines[:-1]:
         inputs[line.split(':')[0]] = line.strip().split(':')[1]
 
-mol = inputs['polymer_name']
 path = inputs['output_directory']
 
 f_in = path + '/stage_I/step_2_inputs/step_2_base.in'
@@ -141,7 +140,7 @@ for l, line in enumerate(lines) :
         
         lines[l] = 'angle_coeff 1 {}\n'.format(k_prime[0])
     
-f = open(f_out.format(mol),'w')
+f = open(f_out,'w')
 for line in lines :
     f.write(line)
 f.close()
