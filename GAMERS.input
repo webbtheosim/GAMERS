@@ -6,7 +6,7 @@ degree_of_polymerization:100
 monomer_mass(g/mol):104.22
 kuhn_mass(g/mol):725.34
 kuhn_length(nm):1.78
-output_directory:/scratch/gpfs/WEBB/jm7732/DoP/NPT/PS/DoP100/0
+output_directory:/absolute/path/to/your/workdir
 restrained_force_prefactor(kJ/mol/amu/nm^2):1
 restrained_simulation_length(ns):1
 annealing_simulation_length(ns):16
