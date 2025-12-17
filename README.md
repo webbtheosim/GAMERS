@@ -17,7 +17,7 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
 
 - **Edit the configuration:**
   ```bash
-  # open GAMERS.input at repository root and adjust:
+  # open GAMERS.input at repository root and adjust path to desired directory
   output_directory:/absolute/path/to/your/workdir
   ```
 
