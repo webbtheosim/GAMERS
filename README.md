@@ -52,16 +52,10 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 - `stage_I/step_2_in_maker.py` — generates `stage_I/step_2_inputs/step_2.in` (LAMMPS input) by adding parameters to `stage_I/step_2_inputs/step_2_base.in`.
 - `stage_I/step_2_inputs/step_2.in` — generates equilibrated KG melt positions in `stage_I/step_2.end` for use in step 3.
 - `stage_I/step_3.py` — creates restraint point IDs and positions (`stage_I/step_3_restraint.ids` and `stage_I/step_3_restraint.pos`) from `stage_I/step_2.end` and `stage_I/step_1.mapping` for Stage II.
-- `stage_II/stage_II.py` — runs the OpenMM-based Stage II simulation that consumes restraint files produced by Stage I.
+- `stage_II/stage_II.py` — runs the OpenMM-based Stage II simulation that consumes restraint files and produces final position/velocity files, found in `stage_II/final_positions`, for each phase of GAMERS.
 - `openff_system_maker.py` — optional generation of OpenMM input files (e.g. sys.xml) with SAGE force field (use as needed in your workflow).
 
-A detailed description of GAMERS can be found at https://doi.org/10.1021/acs.jctc.5c01332.
-
-**Place-to-file relationships:**
-- Files produced by `stage_I/step_1.py` → consumed by `stage_I/step_2_in_maker.py` and `stage_I/step_3.py`.
-- `stage_I/step_2_in_maker.py` → produces `stage_I/step_2_inputs/step_2.in` from stage_I/step_2_inputs/step_2_base.in.
-- `stage_I/step_3.py` → produces restraint ID/coordinate files consumed by `stage_II/stage_II.py`.
-- `stage_II/stage_II.py` → produces final position/velocity files, found in `stage_II/final_positions`, for each phase of GAMERS.
+A detailed description of GAMERS and all the stages/steps/phases can be found at https://doi.org/10.1021/acs.jctc.5c01332.
 
 ## Configuration and /absolute/path/to/your/workdir
 - Edit the single file `GAMERS.input` at the repository root to configure runs.
