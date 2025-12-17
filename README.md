@@ -57,7 +57,7 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 
 A detailed description of GAMERS and all the stages/steps/phases can be found at https://doi.org/10.1021/acs.jctc.5c01332.
 
-## Configuration and /absolute/path/to/your/workdir
+## Path configuration
 - Edit the single file `GAMERS.input` at the repository root to configure runs.
 - Set the variable `/absolute/path/to/your/workdir` to an absolute path for your working directory:
   ```bash
