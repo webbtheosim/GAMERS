@@ -50,7 +50,7 @@ Outputs will be written to the locations configured in `GAMERS.input` (see Path 
 
 ## Input parameters
 
-Select parameters  `GAMERS.input` are described below:
+Select  `GAMERS.input` parameters are described below:
 - restrained_force_prefactor(kJ/mol/amu/nm^2): the spring constant *k<sub>sh</sub>* of semiharmonic restraint potential
 - restrained_simulation_length(ns): the length of stage II phase i (the pulling portion)
 - annealing_simulation_length(ns): the length of stage II phase iii (the entire annealing relaxation protocol)
