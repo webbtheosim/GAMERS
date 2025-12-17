@@ -30,14 +30,14 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
   ```
 
 - **Generate or provide input files for Stage II:**
+  ```bash
+  python openff_system_maker.py
+  ```
+  This will generate the required files with openff-toolkit, namely
   <ol type="1">
     <li>a .pdb file containing all atoms of the system named sys.pdb</li>
     <li>an openmm system object matching sys.pdb saved as sys.xml</li>
   </ol>
-  These can be generated with the provided openff-toolkit script
-  ```bash
-  python openff_system_maker.py
-  ```
   
 - **Run Stage II:**
   ```bash
