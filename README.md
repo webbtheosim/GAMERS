@@ -59,9 +59,6 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 
 - All scripts read configuration from `GAMERS.input`. Changing only `GAMERS.input` will redirect where inputs and outputs are read/written.
 
-**Confirmation about changing only the path:**
-- If every Python script in your working copy reads variables from `GAMERS.input` (as in the repository), updating `output_directory:/absolute/path/to/your/workdir` is the only required change to point the pipeline at your filesystem locations. With that change in place, the pipeline should run without further edits.
-
 ## Dependencies and recommended environment
 - Python 3.8+ (use a virtual environment for reproducibility).
 - Typical Python packages used by the scripts (install into the venv): `numpy`, `openmm`, `openff-toolkit` and any other packages imported at the top of the scripts. Create a venv and install via:
