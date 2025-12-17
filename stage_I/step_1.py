@@ -189,7 +189,6 @@ with open(Path(__file__).resolve().parent.parent / 'GAMERS.input') as input:
     for line in lines[:-1]:
         inputs[line.split(':')[0]] = line.strip().split(':')[1]
 
-mol = inputs['polymer_name']
 rho = float(inputs['density(g/cm^3)'])*gram/centimeter**3
 T = float(inputs['temperature(K)'])*kelvin
 l_k = float(inputs['kuhn_length(nm)'])*nanometer
