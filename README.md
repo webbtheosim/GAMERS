@@ -46,14 +46,6 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
 
 Outputs will be written to the locations configured in GAMERS.input (see Configuration below).
 
-## Force field compatability with stage_II.py
-As designed, `stage_II/stage_II.py` expects `stage_II/inputs/sys.xml` to have nonbonded forces described by a single OpenMM NonbondedForce object named "Nonbonded force".
-The `pull_forcefield_generator_simple` python function (stage_II.py line 47) handles the generation of the soft forces from the current force field.
-
-If a force field requires the definition of an additional OpenMM CustomNonbondedForce object, such as CHARMM or OPLS, `stage_II/stage_II.py` must be altered.
-An example for handling this is present in stage_II.py:
-commenting lines 276 and 326 and uncommenting lines 277 and 327 of `stage_II/stage_II.py` will implement the `pull_forcefield_generator_custom_force_present` python function (stage_II.py line 89), which was written to properly handle the CustomNonbondedForce object required to implement OPLS geometrix mixing of LJ parameters in Openmm.
-
 ## File map and purpose
 - `GAMERS.input` — central configuration file read by all Python scripts; contains /absolute/path/to/your/workdir and system-specific settings.
 - `stage_I/step_1.py` — creates the KG → HR mapping and prepares the LAMMPS data/topology files for Step 2.
@@ -76,6 +68,15 @@ commenting lines 276 and 326 and uncommenting lines 277 and 327 of `stage_II/sta
   ```
 
 - All scripts read configuration from `GAMERS.input`. Changing only `GAMERS.input` will redirect where inputs and outputs are read/written.
+
+## Force-field compatability with stage_II.py
+As designed, `stage_II/stage_II.py` expects `stage_II/inputs/sys.xml` to have nonbonded forces described by a single OpenMM NonbondedForce object named "Nonbonded force".
+The `pull_forcefield_generator_simple` python function (stage_II.py line 47) handles the generation of the soft forces from the force field parameters contained in `stage_II/inputs/sys.xml`.
+
+If a force field requires the definition of an additional OpenMM CustomNonbondedForce object, such as CHARMM or OPLS, `stage_II/stage_II.py` must be altered.
+An example for handling this senario is included in `stage_II/stage_II.py`;
+commenting lines 276 and 326 and uncommenting lines 277 and 327 of `stage_II/stage_II.py` will implement the `pull_forcefield_generator_custom_force_present` python function (`stage_II/stage_II.py` line 89), which was written to properly read force-field parameters from both the NonbondedForce and CustomNonbondedForce objects.
+This implementation is specifically written to handle the CustomNonbondedForce required for OPLS geometrix mixing of LJ parameters in Openmm (see `Geometric` python class in `stage_II/stage_II.py` line 14).
 
 ## Dependencies
 - Python 3.8+ (use a virtual environment for reproducibility).
