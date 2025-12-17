@@ -76,12 +76,12 @@ commenting lines 276 and 326 and uncommenting lines 277 and 327 of `stage_II/sta
 This implementation is specifically written to handle the CustomNonbondedForce required for OPLS geometrix mixing of LJ parameters in Openmm (see `Geometric` python class in `stage_II/stage_II.py` line 14).
 
 ## Dependencies
-- Python 3.8+ (use a virtual environment for reproducibility).
-- Typical Python packages used by the scripts (install into the venv): `numpy`, `openmm`, `openff-toolkit`, `rdkit`, and any other packages imported at the top of the scripts.
-- LAMMPS — required to execute the generated `step_2.in`.
+- Python 3.8+
+- Python packages: `numpy`, `scipy`, `openmm`, `openff-toolkit`, `rdkit`
+- LAMMPS — required to execute the generated `step_2.in`
 
 ## Troubleshooting and notes
-- If a script fails to find files, confirm `/absolute/path/to/your/workdir` in `GAMERS.input` and ensure that directory exists and is writable.
+- If a script fails to find files, confirm `/absolute/path/to/your/workdir` in `GAMERS.input` and ensure the directory exists and is writable.
 - If you see import errors, install the missing packages into the active Python environment.
 - If you modified scripts to inline variables, revert them to read from `GAMERS.input` to keep a single authoritative configuration.
 - Logging and intermediate files: check the directories configured in `GAMERS.input` for outputs created by each step.
