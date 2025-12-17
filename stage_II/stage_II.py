@@ -11,36 +11,6 @@ from copy import deepcopy
 from pathlib import Path
 
 
-def tpi_load(file,N):
-    if False:
-        f = open(file)
-        lines = f.readlines()
-        output = np.zeros((len(lines)-2,2),dtype=int)
-        for i,l in enumerate(lines[2:]):
-            l = l.split()
-            output[i] = np.array([int(l[0]),int(l[1])])
-        f.close()
-        if N != len(output):
-            raise ValueError('The provided .xml and .tpi files have differing atom counts')
-    else:
-        # this is an added portion to read the same info contained by the .tpi file from the .pdb files provided by eser
-        output = []
-        for i in range(8):
-            f = open(file.format(i))
-            lines = f.readlines()
-            f.close()
-            for idx_l,l in lines:
-                if l[:4] == 'ATOM':
-                    continue
-                idx_mon = int(l[23:26])
-                if idx_mon == 0:
-                    idx_mon += 1
-                elif lines[idx_l][:4] != 'ATOM':
-                    idx_mon -= 1
-                output.append([i,idx_mon])
-        output = np.array(output)
-    return output
-
 class Geometric(object):
   def __init__(self,system,scale14):
     self._system = system
