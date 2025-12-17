@@ -35,8 +35,8 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
   ```
   This will generate the required files with openff-toolkit, namely
   <ol type="1">
-    <li>sys.pdb: a properly formatted .pdb file containing all atoms of the system named </li>
-    <li>sys.xml: an openmm system object matching sys.pdb</li>
+    <li>stage_II/inputs/sys.pdb: a properly formatted .pdb file containing all atoms of the system named </li>
+    <li>stage_II/inputs/sys.xml: an openmm system object matching sys.pdb</li>
   </ol>
   
 - **Run Stage II:**
@@ -45,6 +45,14 @@ This README explains how to run the GAMERS pipeline using the scripts provided i
   ```
 
 Outputs will be written to the locations configured in GAMERS.input (see Configuration below).
+
+## Force field compatability with stage_II.py
+As designed, `stage_II/stage_II.py` expects `stage_II/inputs/sys.xml` to have nonbonded forces described by a single OpenMM NonbondedForce object named "Nonbonded force".
+The `pull_forcefield_generator_simple` python function (stage_II.py line 47) handles the generation of the soft forces from the current force field.
+
+If a force field requires the definition of an additional OpenMM CustomNonbondedForce object, such as CHARMM or OPLS, `stage_II/stage_II.py` must be altered.
+An example for handling this is present in stage_II.py:
+commenting lines 276 and 326 and uncommenting lines 277 and 327 of `stage_II/stage_II.py` will implement the `pull_forcefield_generator_custom_force_present` python function (stage_II.py line 89), which was written to properly handle the CustomNonbondedForce object required to implement OPLS geometrix mixing of LJ parameters in Openmm.
 
 ## File map and purpose
 - `GAMERS.input` — central configuration file read by all Python scripts; contains /absolute/path/to/your/workdir and system-specific settings.
@@ -60,7 +68,7 @@ Outputs will be written to the locations configured in GAMERS.input (see Configu
 - `stage_I/step_3.py` → produces restraint ID/coordinate files consumed by `stage_II/stage_II.py`.
 - `stage_II/stage_II.py` → produces final position/velocity files, found in `stage_II/final_positions`, for each phase of GAMERS.
 
-## Configuration and PATH_TO_DIRECTORY
+## Configuration and /absolute/path/to/your/workdir
 - Edit the single file `GAMERS.input` at the repository root to configure runs.
 - Set the variable `/absolute/path/to/your/workdir` to an absolute path for your working directory:
   ```bash
