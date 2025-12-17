@@ -64,7 +64,7 @@ The smiles_connection_index counts from the end of the smiles string to the unti
 This is the atom that will connect to the next monomer during polymerization, which is important for the logical reindexing of OpenFF-generated systems.
 Below are example monomer_smiles and smiles_connection_index combinations for select polymers:
 - PEO: COC, -1
-- PBD: C/C=C\C, -1
+- *cis*-PBD: C/C=C\C, -1
 - PC: c1ccc(cc1)OC(=O)Oc1ccc(cc1)C(C)(C) -3
 - PS: C(c1ccccc1)C, -1
 
