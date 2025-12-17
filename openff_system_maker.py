@@ -78,28 +78,6 @@ def my_remap(molecule,DoP,atm_per_mon,H_bonded,end_idx,head,tail):
     molecule = molecule.remap(mapping_H1)
     
     return molecule
-    
-def tpi_file_maker(file,N_mol,N_mon,N_atm_per_mon,head,tail):
-    if head == 'C':
-        N_head = 4
-    else :
-        N_head = 1
-    if tail == 'C':
-        N_tail = 4
-    else :
-        N_tail = 1
-    
-    f = open(file,'w')
-    f.write('# each entry is for an atom, with the order being the same as the .xml file\n# molecule_id monomer_id')
-    for i in range(N_mol):
-        for j in range(N_head):
-            f.write('\n{} {}'.format(i+1,1))
-        for j in range(N_mon):
-            for k in range(N_atm_per_mon):
-                f.write('\n{} {}'.format(i+1,j+1))
-        for j in range(N_tail):
-            f.write('\n{} {}'.format(i+1,N_mon))
-    f.close()
 
 def read_charge_file(file,N,DoP):
     import numpy as np
@@ -339,8 +317,6 @@ openmm_sys = system.to_openmm()
 
 with open(dr_out + '/sys.xml', 'w') as output:
     output.write(XmlSerializer.serialize(openmm_sys))
-
-tpi_file_maker(dr_out + '/sys.tpi',N_mol,DoP_polymer,N_atm_per_mon,smiles_head,smiles_tail)
 
 print('openff setup completed, times are reported below:',flush=True)
 print(time.strftime("%Hh%Mm%Ss", time.gmtime(time_mon-start)),'for general setup',flush=True)
