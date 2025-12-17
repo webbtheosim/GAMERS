@@ -69,7 +69,7 @@ Below are example monomer_smiles and smiles_connection_index combinations for se
 - PS: C(c1ccccc1)C, -1
 
 ## File map and purpose
-- `GAMERS.input` — central configuration file read by all Python scripts; contains /absolute/path/to/your/workdir and system-specific settings.
+- `GAMERS.input` — central input file read by all Python scripts; contains /absolute/path/to/your/workdir and system-specific settings.
 - `stage_I/step_1.py` — creates the HR → KG mapping (`stage_I/step_1.mapping`) and prepares the LAMMPS data/topology files for step 2.
 - `stage_I/step_2_in_maker.py` — generates `stage_I/step_2_inputs/step_2.in` (LAMMPS input) by adding parameters to `stage_I/step_2_inputs/step_2_base.in`.
 - `stage_I/step_2_inputs/step_2.in` — generates equilibrated KG melt positions in `stage_I/step_2.end` for use in step 3.
