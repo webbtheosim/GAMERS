@@ -5,7 +5,7 @@ Repository for General Approach for Macromolecular Equilibration via Restrained 
 <img src="overview.png" />
 <br />
 
-This README explains how to run the GAMERS pipeline using the scripts provided in this repository. It assumes you have cloned the repo and will edit a single configuration file before running the pipeline. Along with GAMERS scripts, this repository contains example GAMERS input and output files for the generation of a polystyrene melt.
+This README explains how to run the GAMERS pipeline using the scripts provided in this repository. It assumes you have cloned the repo and will edit a single input file before running the pipeline. Along with GAMERS scripts, this repository contains example GAMERS input and output files for the generation of a polystyrene melt.
 
 ## Quick start commands
 
