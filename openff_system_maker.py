@@ -210,6 +210,7 @@ with open(Path(__file__).resolve().parent / 'GAMERS.input') as input:
     for line in lines[:-1]:
         inputs[line.split(':')[0]] = line.strip().split(':')[1]
 
+mol = inputs['polymer_abbreviation']
 density = float(inputs['density(g/cm^3)'])*unit.gram/unit.centimeter**3
 DoP_polymer = int(inputs['degree_of_polymerization'])
 N_mol = int(inputs['molecule_count'])
