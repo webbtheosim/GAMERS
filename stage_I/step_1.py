@@ -222,17 +222,23 @@ positions,L = frc(kappa,N_b,N_mol)
 
 print('\nWriting data file')
 
-N_bond = N - N_mol
-N_angle = N - 2*N_mol
+N_bond = max(0,N - N_mol)
+N_angle = max(0,N - 2*N_mol)
 
 f = open(f_out, 'w')
 f.write('#LAMMPS data file generated with python script of Jacob Metcalfe to simulate freely-rotating chain\n\n')
 f.write('{} atoms\n'.format( int(N_b*N_mol) ))
 f.write('1 atom types\n')
 f.write('{} bonds\n'.format(N_bond))
-f.write('1 bond types\n')
+if N_bond > 0:
+    f.write('1 bond types\n')
+else:
+    f.write('0 bond types\n')
 f.write('{} angles\n'.format(N_angle))
-f.write('1 angle types\n')
+if N_angle > 0:
+    f.write('1 angle types\n')
+else:
+    f.write('0 angle types\n')
 f.write('\n0 {} xlo xhi\n'.format(L))
 f.write('0 {} ylo yhi\n'.format(L))
 f.write('0 {} zlo zhi\n\n'.format(L))
@@ -242,18 +248,20 @@ f.write('Atoms # angle\n\n')
 for i in range(N_mol) :
     for j in range(N_b) :
         f.write('{} {} 1 {} {} {} {} {} {}\n'.format(i*N_b+j+1,i+1,positions[i][j][0]%L,positions[i][j][1]%L,positions[i][j][2]%L,int(positions[i][j][0]//L),int(positions[i][j][1]//L),int(positions[i][j][2]//L)))
-f.write('\nBonds\n\n')
-c = 0
-for i in range(N_mol) :
-    for j in range(N_b-1) :
-        c += 1
-        k = i*N_b + j + 1
-        f.write('{} 1 {} {}\n'.format(c,k,k+1))
-f.write('\nAngles\n\n')
-c = 0
-for i in range(N_mol) :
-    for j in range(N_b-2) :
-        c += 1
-        k = i*N_b + j + 1
-        f.write('{} 1 {} {} {}\n'.format(c,k,k+1,k+2))
+if N_bond > 0:
+    f.write('\nBonds\n\n')
+    c = 0
+    for i in range(N_mol) :
+        for j in range(N_b-1) :
+            c += 1
+            k = i*N_b + j + 1
+            f.write('{} 1 {} {}\n'.format(c,k,k+1))
+if N_angle > 0:
+    f.write('\nAngles\n\n')
+    c = 0
+    for i in range(N_mol) :
+        for j in range(N_b-2) :
+            c += 1
+            k = i*N_b + j + 1
+            f.write('{} 1 {} {} {}\n'.format(c,k,k+1,k+2))
 f.close()
