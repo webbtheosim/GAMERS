@@ -93,6 +93,7 @@ f_tab = path + '/stage_I/step_2_inputs/WCA_soft_U0_{}.table'
 f = open(path + '/stage_I/step_1.mapping')
 f.readline()
 info = f.readline().split()
+N_b = int(info[0])
 k = float(info[1])
 L = float(info[6])/float(info[2])
 l_b = 0.965
@@ -137,8 +138,14 @@ for l, line in enumerate(lines) :
         
         k_prime_solve = partial(k_solve,k=k,W=W)
         k_prime = fsolve(k_prime_solve,k,maxfev=10**6)
-        
-        lines[l] = 'angle_coeff 1 {}\n'.format(k_prime[0])
+
+        if N_b > 2:
+            lines[l] = 'angle_coeff 1 {}\n'.format(k_prime[0])
+        else:
+            lines[l] = ''
+
+    if 'bond_coeff' in line and N_b < 2:
+        lines[l] = ''
     
 f = open(f_out,'w')
 for line in lines :
