@@ -165,7 +165,10 @@ def pdb_formatter(mol,idx_monomers,f_in,f_out):
             idx_atm = 0
         else :
             dict_idx[line[6:11]] = idx_atm_tot
-            line = 'ATOM  ' + '{:5d}'.format(idx_atm_tot) + ' {:04X}'.format(idx_atm) + ' {:3} {}{:4}'.format(mol,line[21],idx_monomers[idx_atm]) + line[26:]
+            if idx_atm_tot > 99999:
+                line = 'ATOM  ' + '{:5X}'.format(idx_atm_tot) + ' {:04X}'.format(idx_atm) + ' {:3} {}{:4}'.format(mol,line[21],idx_monomers[idx_atm]) + line[26:]
+            else:
+                line = 'ATOM  ' + '{:5d}'.format(idx_atm_tot) + ' {:04X}'.format(idx_atm) + ' {:3} {}{:4}'.format(mol,line[21],idx_monomers[idx_atm]) + line[26:]
             idx_atm += 1
             idx_atm_tot += 1
             lines.append(line)
@@ -174,7 +177,10 @@ def pdb_formatter(mol,idx_monomers,f_in,f_out):
         line_new = 'CONECT'
         for i in range(4):
             if len(line) > 8 + 5*i:
-                line_new = line_new + '{:5d}'.format(dict_idx[line[6+5*i:11+5*i]])
+                if dict_idx[line[6+5*i:11+5*i]] > 99999:
+                    line_new = line_new + '{:5X}'.format(dict_idx[line[6+5*i:11+5*i]])
+                else:
+                    line_new = line_new + '{:5d}'.format(dict_idx[line[6+5*i:11+5*i]])
         if len(line_new) > 10:
             lines.append(line_new + '\n')
         else:
