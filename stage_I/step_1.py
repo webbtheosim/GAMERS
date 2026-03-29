@@ -103,7 +103,7 @@ def frc(kappa,N_mon,N_mol):
             
         i += 1
         if i == N_mol :
-            if ((1-tolerance)*R_2_thr > np.mean(R_2)/N_mon or np.mean(R_2)/N_mon > (1+tolerance)*R_2_thr) and N_mon > 20*kappa**0.5 and fail_count < 10 :
+            if (0.9*R_2_thr > np.mean(R_2)/N_mon or np.mean(R_2)/N_mon > 1.1*R_2_thr) and N_mon > 20*kappa**0.5 and fail_count < 10 :
                 i = 0
                 fail_count += 1
                 crds = np.zeros((N_mol,N_mon,3))
