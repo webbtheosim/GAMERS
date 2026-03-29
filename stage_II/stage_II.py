@@ -259,22 +259,14 @@ vel_out_file_npt = path + '/stage_II/final_positions/npt.vel'
 print('simulation will be performed at {}'.format(T))
     
 pdb = PDBFile(pdb_file)
-if True:
-    with open(system_file) as input:
-        system = XmlSerializer.deserialize(input.read())
-else:
-    forcefield = ForceField(ff_file)
-    system = forcefield.createSystem(pdb.topology, nonbondedMethod=PME, nonbondedCutoff=1.0*nanometer, removeCMMotion=True)
-    system = Geometric.GeometricMix(system,scale14=0.5)
-    f = open(path + '/stage_I/step_1.mapping')
-    L = float(f.readlines()[1].split()[6])/10
-    f.close()
-    system.setDefaultPeriodicBoxVectors(np.array([L,0,0])*nanometer,np.array([0,L,0])*nanometer,np.array([0,0,L])*nanometer)
+with open(system_file) as input:
+    system = XmlSerializer.deserialize(input.read())
+    
+system, LJ_soft, LJ_soft_14, original_nonbonded_force = pull_forcefield_generator_simple(system,0.5,0.833333)
+#system, LJ_soft, LJ_soft_14, original_nonbonded_force, original_nonbonded_custom = pull_forcefield_generator_custom_force_present(system,0.5,0.5)
 
 integrator = LangevinMiddleIntegrator(T,1/picosecond,0.001*picoseconds)
 simulation = Simulation(pdb.topology, system, integrator)
-system, LJ_soft, LJ_soft_14, original_nonbonded_force = pull_forcefield_generator_simple(system,0.5,0.833333)
-#system, LJ_soft, LJ_soft_14, original_nonbonded_force, original_nonbonded_custom = pull_forcefield_generator_custom_force_present(system,0.5,0.5)
 simulation.context.reinitialize(preserveState=True)
 
 simulation.context.setPositions(pdb.positions)
