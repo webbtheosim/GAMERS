@@ -87,6 +87,7 @@ def frc(kappa,N_mon,N_mol):
     
     print('\nGenerating chains via the freely-rotating-chain algorithm\n', flush=True)
     i = 0
+    fail_count = 0
     while i < N_mol :
         # the first position is fixed at (0,0,0), the second is placed using  uniformly
         # sampled theta and phi, then the chain is built and randomly shifted 
@@ -102,8 +103,9 @@ def frc(kappa,N_mon,N_mol):
             
         i += 1
         if i == N_mol :
-            if (0.9*R_2_thr > np.mean(R_2)/N_mon or np.mean(R_2)/N_mon > 1.1*R_2_thr) and N_mon > 20 :
+            if ((1-tolerance)*R_2_thr > np.mean(R_2)/N_mon or np.mean(R_2)/N_mon > (1+tolerance)*R_2_thr) and N_mon > 20*kappa**0.5 and fail_count < 10 :
                 i = 0
+                fail_count += 1
                 crds = np.zeros((N_mol,N_mon,3))
                 print('regenerating confiruation, R_2 of {:.2f} is not close enough to theoretical value of {:.2f}'.format(np.mean(R_2)/N_mon,R_2_thr), flush=True)
             else :
