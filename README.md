@@ -99,7 +99,7 @@ This implementation is specifically written to handle the CustomNonbondedForce r
 
 ## Dependencies
 - Python 3.8+
-- Python packages: `numpy`, `scipy`, `openmm`, `openff-toolkit`, `rdkit`
+- Python packages: `numpy`, `numba`, `scipy`, `openmm`, `openff-toolkit`, `rdkit`
 - LAMMPS — required to execute the generated `step_2.in`
 
 ## Troubleshooting and notes
