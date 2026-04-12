@@ -36,8 +36,10 @@ def hydrogen_tracker(connector_idx,smiles_mon,smiles_head,smiles_tail):
             for bond in monomer.bonds:
                 if bond.atom1 == atom or bond.atom2 == atom:
                     # Check if the other atom in the bond is a hydrogen
+                    ### NEW ADDITION: treats F as H, as both are minimal for restraint CoM ###
+                    ### calculation, which are memory intensive, so reducing atoms is best ###
                     other_atom = bond.atom2 if bond.atom1 == atom else bond.atom1
-                    if other_atom.atomic_number == 1:  # Atomic number 1 is Hydrogen
+                    if other_atom.atomic_number == 1 or other_atom.atomic_number == 9:
                         N_H_per_hvy[hvy_idx] += 1
             hvy_idx +=1
     
