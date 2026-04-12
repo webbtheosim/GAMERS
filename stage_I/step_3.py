@@ -17,7 +17,8 @@ def edge_padding(crds) :
     return np.append( start, np.append(crds, end, axis=0), axis=0 )
 
 def hydrogen_tracker(connector_idx,smiles_mon,smiles_head,smiles_tail):
-    
+    ### NEW ADDITION: treats F as H, as both are minimal for restraint CoM ###
+    ### calculation, which are memory intensive, so reducing atoms is best ###
     try:
         monomer = Molecule.from_smiles(smiles_mon,allow_undefined_stereo=True)
     except:
@@ -25,19 +26,17 @@ def hydrogen_tracker(connector_idx,smiles_mon,smiles_head,smiles_tail):
     N_hvy_per_mon = 0
     for s in monomer.to_smiles() :
         if s.isalpha() :
-            if s != 'H' :
+            if s not in ['H','F'] :
                 N_hvy_per_mon += 1
     N_H_per_hvy = np.zeros(N_hvy_per_mon, dtype=int)
     N_H_per_hvy[0] -= 1
     N_H_per_hvy[connector_idx] -= 1
     hvy_idx = 0
     for atom in monomer.atoms :
-        if atom.atomic_number != 1 :
+        if atom.atomic_number not in [1,9] :
             for bond in monomer.bonds:
                 if bond.atom1 == atom or bond.atom2 == atom:
                     # Check if the other atom in the bond is a hydrogen
-                    ### NEW ADDITION: treats F as H, as both are minimal for restraint CoM ###
-                    ### calculation, which are memory intensive, so reducing atoms is best ###
                     other_atom = bond.atom2 if bond.atom1 == atom else bond.atom1
                     if other_atom.atomic_number == 1 or other_atom.atomic_number == 9:
                         N_H_per_hvy[hvy_idx] += 1
