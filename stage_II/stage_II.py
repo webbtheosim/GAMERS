@@ -319,7 +319,7 @@ lambdas = np.delete(np.linspace(0,1,101),0)
 # 100 intervals to introduce lambda_p
 for l in lambdas:
     simulation.context.setParameter('lambda_p',l)
-    simulation.minimizeEnergy(tolerance=(90*(1-l)+10)*kilojoule/mole)
+    simulation.minimizeEnergy(tolerance=(90*(1-l)+10))
 print('Pair potentials fully introduced')
 remove = []
 for i,f in enumerate(system.getForces()) :
