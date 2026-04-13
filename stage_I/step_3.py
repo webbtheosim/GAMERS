@@ -24,10 +24,15 @@ def hydrogen_tracker(connector_idx,smiles_mon,smiles_head,smiles_tail):
     except:
         monomer = Molecule.from_smiles(smiles_mon+'([H])',allow_undefined_stereo=True)
     N_hvy_per_mon = 0
+    connector_shift = 0
     for s in monomer.to_smiles() :
         if s.isalpha() :
             if s not in ['H','F'] :
                 N_hvy_per_mon += 1
+                connector_shift = 0
+            elif s == 'F':
+                connector_shift += 1
+    connector_idx += connector_shift
     N_H_per_hvy = np.zeros(N_hvy_per_mon, dtype=int)
     N_H_per_hvy[0] -= 1
     N_H_per_hvy[connector_idx] -= 1

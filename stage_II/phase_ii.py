@@ -243,10 +243,7 @@ with open(Path(__file__).resolve().parent.parent / 'GAMERS.input') as input:
 
 T = float(inputs['temperature(K)'])*kelvin
 tether_prefactor = float(inputs['restrained_force_prefactor(kJ/mol/amu/nm^2)'])
-N_steps_pull = int(float(inputs['restrained_simulation_length(ns)'])*10**6)
 N_steps_rest = 10**5
-N_steps_anneal = int(float(inputs['annealing_simulation_length(ns)'])*10**6)
-N_steps_npt = int(float(inputs['npt_simulation_length(ns)'])*10**6)
 path = inputs['output_directory']
 
 pdb_file = path + '/stage_II/inputs/sys.pdb'
@@ -256,14 +253,11 @@ thermo_file = path + '/stage_II/stage_II.thermo'
 groups_file = path + '/stage_I/step_3_restraint.ids'
 crds_file = path + '/stage_I/step_3_restraint.pos'
 
-pos_out_file_phase_i = path + '/stage_II/final_positions/phase_i.pos'
-pos_out_file_phase_ii = path + '/stage_II/final_positions/phase_ii.pos'
-pos_out_file_phase_iii = path + '/stage_II/final_positions/phase_iii.pos'
-pos_out_file_npt = path + '/stage_II/final_positions/npt.pos'
-vel_out_file_phase_i = path + '/stage_II/final_positions/phase_i.vel'
-vel_out_file_phase_ii = path + '/stage_II/final_positions/phase_ii.vel'
-vel_out_file_phase_iii = path + '/stage_II/final_positions/phase_iii.vel'
-vel_out_file_npt = path + '/stage_II/final_positions/npt.vel'
+pos_in_file = path + '/stage_II/final_positions/phase_i.pos'
+vel_in_file = path + '/stage_II/final_positions/phase_i.vel'
+
+pos_out_file = path + '/stage_II/final_positions/phase_ii.pos'
+vel_out_file = path + '/stage_II/final_positions/phase_ii.vel'
 
 ################################################################################
 # Monomer tethers with no pair potential
@@ -280,34 +274,38 @@ system, LJ_soft, LJ_soft_14, original_nonbonded_force = pull_forcefield_generato
 
 integrator = LangevinMiddleIntegrator(T,1/picosecond,0.001*picoseconds)
 simulation = Simulation(pdb.topology, system, integrator)
-simulation.context.setPositions(pdb.positions)
+with open(pos_in_file) as input:
+    input.readline()
+    line = input.readline().split()
+    box_vec_a = np.array([float(line[0]),float(line[1]),float(line[2])])*nanometers
+    line = input.readline().split()
+    box_vec_b = np.array([float(line[0]),float(line[1]),float(line[2])])*nanometers
+    line = input.readline().split()
+    box_vec_c = np.array([float(line[0]),float(line[1]),float(line[2])])*nanometers
+    input.readline()
+    input_num = int(input.readline())
+    pos = np.zeros((input_num,3))
+    input.readline()
+    for i in range(input_num) :
+        line = input.readline().split()
+        pos[i] = np.array([float(line[0]),float(line[1]),float(line[2])])*nanometers
+with open(vel_in_file) as input:
+    input.readline()
+    input_num = int(input.readline())
+    vel = np.zeros((input_num,3))
+    input.readline()
+    for i in range(input_num) :
+        line = input.readline().split()
+        vel[i] = np.array([float(line[0]),float(line[1]),float(line[2])])*nanometer/picosecond
+simulation.context.setPeriodicBoxVectors(box_vec_a,box_vec_b,box_vec_c)
+simulation.context.setPositions(pos)
+simulation.context.setVelocities(vel)
 simulation.minimizeEnergy()
 
 if tether_prefactor > 0:
-    system = tether_centroid(system,simulation,groups_file,crds_file,tether_prefactor,'capped')
-safe_reinitialize(simulation)
-        
+    system = tether_centroid(system,simulation,groups_file,crds_file,tether_prefactor,'harmonic')
+
 simulation.reporters.append(StateDataReporter(stdout, 100000, step=True, potentialEnergy=True, temperature=True, density=True))
-
-for f in system.getForces():
-    if 'tether' not in f.getName() :
-        print(f.getName())
-    else :
-        t_w = simulation.context.getParameter('w')
-
-if tether_prefactor > 0:
-    print('Pulling chains to KG contour')
-    # tether width is increased over 100 steps
-    # print('Switching to harmonic spring')
-    for i in range(100) :
-        simulation.context.setParameter('w',(i+1)**2/100*t_w)
-        simulation.step(N_steps_pull//100)
-    
-    for i,f in enumerate(system.getForces()):
-        if 'tether' in f.getName():
-            f.setEnergyFunction('lambda_r*k*((x1-x)^2+(y1-y)^2+(z1-z)^2)')
-
-save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_phase_i,vel_out_file_phase_i)
 
 system.addForce(LJ_soft)
 system.addForce(LJ_soft_14)
@@ -351,50 +349,4 @@ if tether_prefactor > 0:
     for i in reversed(remove):
         system.removeForce(i)
 
-save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_phase_ii,vel_out_file_phase_ii)
-
-################################################################################
-# Annealing of the system to/from 1.5x T
-################################################################################
-
-if N_steps_anneal != 0:
-
-    Th = 1.5*T
-    system.addForce(CMMotionRemover(1000))
-    safe_reinitialize(simulation)
-    
-    print('Ramping T={} to T={}'.format(T,Th))
-    for i in range(100) :
-        T_tmp = T+(Th-T)*(i+1)/100
-        integrator.setTemperature(T_tmp)
-        simulation.step(N_steps_anneal//100//4)
-        
-    print('Holding at T={}'.format(Th))
-    integrator.setTemperature(Th)
-    simulation.step(N_steps_anneal//4)
-    
-    print('Ramping T={} to T={}'.format(Th,T))
-    for i in range(100) :
-        T_tmp = Th+(T-Th)*(i+1)/100
-        integrator.setTemperature(T_tmp)
-        simulation.step(N_steps_anneal//100//4)
-        
-    print('Holding at T={}'.format(T))
-    integrator.setTemperature(T)
-    simulation.step(N_steps_anneal//4)
-    
-    save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_phase_iii,vel_out_file_phase_iii)
-
-################################################################################
-# NPT equilibration
-################################################################################
-
-if N_steps_npt != 0:
-    simulation.reporters.append(StateDataReporter(thermo_file, 1000, step=True, density=True))
-    system.addForce(MonteCarloBarostat(1*bar, T))
-    safe_reinitialize(simulation)
-    
-    print("Running NPT")
-    simulation.step(N_steps_npt)
-    
-    save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_npt,vel_out_file_npt)
+save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file,vel_out_file)
