@@ -266,7 +266,7 @@ vel_out_file_phase_iii = path + '/stage_II/final_positions/phase_iii.vel'
 vel_out_file_npt = path + '/stage_II/final_positions/npt.vel'
 
 ################################################################################
-# Monomer tethers with no pair potential
+# Kuhn restraints with no pair potential
 ################################################################################
 
 print('simulation will be performed at {}'.format(T))
@@ -307,42 +307,46 @@ if tether_prefactor > 0:
         if 'tether' in f.getName():
             f.setEnergyFunction('lambda_r*k*((x1-x)^2+(y1-y)^2+(z1-z)^2)')
 
-save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_phase_i,vel_out_file_phase_i)
+    save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_phase_i,vel_out_file_phase_i)
 
 system.addForce(LJ_soft)
 system.addForce(LJ_soft_14)
-
 safe_reinitialize(simulation)
 
-print('Introducing pair potentials')
-lambdas = np.delete(np.linspace(0,1,101),0)
-# 100 intervals to introduce lambda_p
-for l in lambdas:
-    simulation.context.setParameter('lambda_p',l)
-    simulation.minimizeEnergy(tolerance=(90*(1-l)+10))
-print('Pair potentials fully introduced')
-remove = []
-for i,f in enumerate(system.getForces()) :
-    if 'LJ' in f.getName():
-        remove.append(i)
-for i in reversed(remove):
-    system.removeForce(i)
-system.addForce(original_nonbonded_force)
-#system.addForce(original_nonbonded_custom)
-safe_reinitialize(simulation)
-simulation.minimizeEnergy()
-
-for f in system.getForces() :
-    if 'tether' not in f.getName() :
-        print(f.getName())
+################################################################################
+# Introduce pair interactions and remove restraints (concurrent for stability)
+################################################################################
 
 if tether_prefactor > 0:
-    print('Removing restraints')
-    lambdas = np.delete(np.linspace(1,0,101),0)
-    # 100 intervals to remove lambda_r
+    print('Introducing pair potentials and removing restraints')
+    lambdas = np.delete(np.linspace(0,1,901),0)
+    # 900 intervals to introduce lambda_p and reduce lambda_r
     for l in lambdas:
-        simulation.context.setParameter('lambda_r',l)
-        simulation.step(N_steps_rest//100)
+        # lambda_pair from 0 to 1
+        simulation.context.setParameter('lambda_p',l)
+        # lambda_restraint from 1 to 0.1
+        simulation.context.setParameter('lambda_r',(1-0.9*l))
+        simulation.step(9*N_steps_rest//1000)
+    print('Pair potentials fully introduced')
+    remove = []
+    for i,f in enumerate(system.getForces()) :
+        if 'LJ' in f.getName():
+            remove.append(i)
+    for i in reversed(remove):
+        system.removeForce(i)
+    system.addForce(original_nonbonded_force)
+    #system.addForce(original_nonbonded_custom)
+    safe_reinitialize(simulation)
+
+    for f in system.getForces() :
+        if 'tether' not in f.getName() :
+            print(f.getName())
+
+    lambdas = np.delete(np.linspace(0.1,0,101),0)
+    # 100 intervals to finish removing lambda_r
+    for l in lambdas:
+        # lambda restraint from 0.1 to 0
+        simulation.step(N_steps_rest//1000)
     
     remove = []
     for i,f in enumerate(system.getForces()) :
@@ -350,7 +354,27 @@ if tether_prefactor > 0:
             remove.append(i)
     for i in reversed(remove):
         system.removeForce(i)
+    
+    print('Restarints fully removed')
+else:
+    print('Introducing pair potentials)
+    lambdas = np.delete(np.linspace(0,1,901),0)
+    # 100 intervals to introduce lambda_p
+    for l in lambdas:
+        # lambda pair from 0 to 1
+        simulation.context.setParameter('lambda_p',l)
+        simulation.step(N_steps_rest//100)
+    print('Pair potentials fully introduced')
+    remove = []
+    for i,f in enumerate(system.getForces()) :
+        if 'LJ' in f.getName():
+            remove.append(i)
+    for i in reversed(remove):
+        system.removeForce(i)
+    system.addForce(original_nonbonded_force)
+    #system.addForce(original_nonbonded_custom)
 
+safe_reinitialize(simulation)
 save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_phase_ii,vel_out_file_phase_ii)
 
 ################################################################################
