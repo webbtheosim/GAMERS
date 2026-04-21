@@ -244,7 +244,6 @@ with open(Path(__file__).resolve().parent.parent / 'GAMERS.input') as input:
 T = float(inputs['temperature(K)'])*kelvin
 tether_prefactor = float(inputs['restrained_force_prefactor(kJ/mol/amu/nm^2)'])
 N_steps_pull = int(float(inputs['restrained_simulation_length(ns)'])*10**6)
-N_steps_rest = 10**5
 N_steps_anneal = int(float(inputs['annealing_simulation_length(ns)'])*10**6)
 N_steps_npt = int(float(inputs['npt_simulation_length(ns)'])*10**6)
 path = inputs['output_directory']
@@ -314,65 +313,45 @@ system.addForce(LJ_soft_14)
 safe_reinitialize(simulation)
 
 ################################################################################
-# Introduce pair interactions and remove restraints (concurrent for stability)
+# Introduce pair interactions and remove restraints
 ################################################################################
 
+print('Introducing pair potentials')
+lambdas = np.delete(np.linspace(0,1,101),0)
+# 100 intervals to introduce lambda_p
+for l in lambdas:
+    # lambda_pair from 0 to 1
+    simulation.context.setParameter('lambda_p',l)
+    simulation.minimizeEnergy()
+print('Pair potentials fully introduced')
+remove = []
+for i,f in enumerate(system.getForces()) :
+    if 'LJ' in f.getName():
+        remove.append(i)
+for i in reversed(remove):
+    system.removeForce(i)
+system.addForce(original_nonbonded_force)
+#system.addForce(original_nonbonded_custom)
+safe_reinitialize(simulation)
+
+for f in system.getForces() :
+    if 'tether' not in f.getName() :
+        print(f.getName())
+
 if tether_prefactor > 0:
-    print('Introducing pair potentials and removing restraints')
-    lambdas = np.delete(np.linspace(0,1,901),0)
-    # 900 intervals to introduce lambda_p and reduce lambda_r
-    for l in lambdas:
-        # lambda_pair from 0 to 1
-        simulation.context.setParameter('lambda_p',l)
-        # lambda_restraint from 1 to 0.1
-        simulation.context.setParameter('lambda_r',(1-0.9*l))
-        simulation.step(9*N_steps_rest//1000)
-    print('Pair potentials fully introduced')
-    remove = []
-    for i,f in enumerate(system.getForces()) :
-        if 'LJ' in f.getName():
-            remove.append(i)
-    for i in reversed(remove):
-        system.removeForce(i)
-    system.addForce(original_nonbonded_force)
-    #system.addForce(original_nonbonded_custom)
-    safe_reinitialize(simulation)
-
-    for f in system.getForces() :
-        if 'tether' not in f.getName() :
-            print(f.getName())
-
-    lambdas = np.delete(np.linspace(0.1,0,101),0)
+    lambdas = np.delete(np.linspace(1,0,101),0)
     # 100 intervals to finish removing lambda_r
     for l in lambdas:
-        # lambda restraint from 0.1 to 0
-        simulation.step(N_steps_rest//1000)
-    
+        # lambda_restraint from 1 to 0
+        simulation.context.setParameter('lambda_r',l)
+        simulation.minimizeEnergy()
     remove = []
     for i,f in enumerate(system.getForces()) :
         if 'tether' in f.getName():
             remove.append(i)
     for i in reversed(remove):
         system.removeForce(i)
-    
     print('Restarints fully removed')
-else:
-    print('Introducing pair potentials)
-    lambdas = np.delete(np.linspace(0,1,901),0)
-    # 100 intervals to introduce lambda_p
-    for l in lambdas:
-        # lambda pair from 0 to 1
-        simulation.context.setParameter('lambda_p',l)
-        simulation.step(N_steps_rest//100)
-    print('Pair potentials fully introduced')
-    remove = []
-    for i,f in enumerate(system.getForces()) :
-        if 'LJ' in f.getName():
-            remove.append(i)
-    for i in reversed(remove):
-        system.removeForce(i)
-    system.addForce(original_nonbonded_force)
-    #system.addForce(original_nonbonded_custom)
 
 safe_reinitialize(simulation)
 save_pos_vel_files(simulation.context.getState(getPositions=True,getVelocities=True),pos_out_file_phase_ii,vel_out_file_phase_ii)
