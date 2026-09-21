@@ -65,8 +65,8 @@ def pull_forcefield_generator_simple(system,scale14_LJ,scale14_coul) :
       charge, sigma, epsilon = original_nonbonded_force.getParticleParameters(index)
       LJ.addParticle([sigma, epsilon, charge])
     
-    energy_expression = 'lambda_p^2*({}*4*epsilon*(1/(0.5*(1-lambda_p)^2+(r/sigma)^6)^2-1/(0.5*(1-lambda_p)^2+(r/sigma)^6)) + {}*138.9354576*chargeprod/(0.1*(1-lambda_p)^2+r^2)^0.5)'
-    LJ_14 = CustomBondForce(energy_expression.format(scale14_LJ,scale14_coul))
+    energy_expression = 'lambda_p^2*(4*epsilon*(1/(0.5*(1-lambda_p)^2+(r/sigma)^6)^2-1/(0.5*(1-lambda_p)^2+(r/sigma)^6)) + 138.9354576*chargeprod/(0.1*(1-lambda_p)^2+r^2)^0.5)'
+    LJ_14 = CustomBondForce(energy_expression)
     LJ_14.addPerBondParameter('sigma')
     LJ_14.addPerBondParameter('epsilon')
     LJ_14.addPerBondParameter('chargeprod')
